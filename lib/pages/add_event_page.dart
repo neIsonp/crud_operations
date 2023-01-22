@@ -1,10 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite_study/main.dart';
 import 'package:sqflite_study/models/event_model.dart';
 import 'package:sqflite_study/sql/sqflite_helper.dart';
 
@@ -25,7 +20,6 @@ class _AddEventState extends State<AddEvent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     if (widget.event != null) {
@@ -83,7 +77,7 @@ class _AddEventState extends State<AddEvent> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12))),
                   validator: (value) {
-                    if (value!.isEmpty || value == null) {
+                    if (value!.isEmpty) {
                       return "Este campo é obrigatório";
                     }
                     return null;
@@ -106,7 +100,7 @@ class _AddEventState extends State<AddEvent> {
                     hintText: 'Enter your description',
                   ),
                   validator: (value) {
-                    if (value!.isEmpty || value == null) {
+                    if (value!.isEmpty) {
                       return "Este campo é obrigatório";
                     }
                     return null;
@@ -128,7 +122,7 @@ class _AddEventState extends State<AddEvent> {
                     hintText: 'image url',
                   ),
                   validator: (value) {
-                    if (value!.isEmpty || value == null) {
+                    if (value!.isEmpty) {
                       return "Este campo é obrigatório";
                     }
                     return null;
@@ -207,7 +201,7 @@ class _AddEventState extends State<AddEvent> {
       lastDate: DateTime(2050),
     ) as DateTime;
 
-    if (picked != null && picked != selectedDate) {
+    if (picked != selectedDate) {
       setState(() {
         selectedDate = picked;
       });

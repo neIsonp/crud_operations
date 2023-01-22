@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:intl/intl.dart';
-import 'package:sqflite_study/main.dart';
 import 'package:sqflite_study/models/event_model.dart';
 import 'package:sqflite_study/pages/add_event_page.dart';
 import 'package:sqflite_study/pages/event_information_page.dart';
@@ -50,26 +46,105 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             )
-          : ListView.builder(
-              itemCount: _eventsList.length,
-              itemBuilder: (context, index) {
-                final event = _eventsList[index];
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: ((context) => EventInformationPage(
-                              id: event.id,
-                            )),
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
+                  childAspectRatio: 3 / 4,
+                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 20,
+                ),
+                itemCount: _eventsList.length,
+                itemBuilder: ((context, index) {
+                  final event = _eventsList[index];
+                  return Container(
+                    width: 200,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          spreadRadius: 10,
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 100,
+                            width: 160,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                event.image,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.date_range,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                event.date,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Expanded(
+                            child: Text(
+                              event.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: ((context) => EventInformationPage(
+                                          id: event.id,
+                                        )),
+                                  ),
+                                ).then(
+                                  (value) => loadEvents(),
+                                );
+                              },
+                              child: const Text(
+                                'Ver Evento',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    ).then(
-                      (value) => loadEvents(),
-                    );
-                  },
-                  child: EventItemStyle(event: event),
-                );
-              },
+                    ),
+                  );
+                }),
+              ),
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -93,77 +168,5 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _eventsList = data.map((e) => EventModel.fromJson(e)).toList();
     });
-  }
-}
-
-class EventItemStyle extends StatelessWidget {
-  const EventItemStyle({
-    Key? key,
-    required this.event,
-  }) : super(key: key);
-
-  final EventModel event;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 5,
-        horizontal: 5,
-      ),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      event.title,
-                      style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Varela,'),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.date_range,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(event.date),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 80,
-              width: 120,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(12),
-                  bottomRight: Radius.circular(12),
-                ),
-                child: Image.network(
-                  event.image,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
   }
 }
